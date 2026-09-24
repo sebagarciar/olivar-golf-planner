@@ -35,7 +35,7 @@
       "hole": 5, "aim_m": -4, "green_aim_m": -4, "safe_miss": "left", "key_hazard": "OB right",
       "notes": [
         "Narrow par 3 with OB right: if in doubt, miss left.",
-        "Bunker short-left and one right of the green: the middle-left is the target."
+        "Green is bunkered front-left, front-right and back: take the middle of the green, not the flag."
       ]
     },
     {
@@ -78,8 +78,8 @@
     {
       "hole": 11, "aim_m": -8, "green_aim_m": -4, "safe_miss": "short-left", "key_hazard": "Water short and right",
       "notes": [
-        "Long par 3 over water on the right: play to the left side.",
-        "Laying up short-left and chipping on is a perfectly good plan."
+        "Long par 3 over water on the right: favor the left-center, not the far left - two bunkers guard that side too.",
+        "Laying up short and chipping on is a perfectly good plan."
       ]
     },
     {
@@ -92,7 +92,7 @@
     {
       "hole": 13, "aim_m": -5, "green_aim_m": -3, "safe_miss": "left", "key_hazard": "OB and bunker right",
       "notes": [
-        "Everything bad is on the right: aim at the left half of the green.",
+        "OB is on the right, so miss left if in doubt - but there's now a bunker front-left too, so aim center-left rather than the far edge.",
         "Tricky green: two putts is a good result."
       ]
     },
@@ -121,7 +121,7 @@
     {
       "hole": 17, "aim_m": 6, "green_aim_m": 0, "safe_miss": "right", "key_hazard": "Water left in the driving zone",
       "notes": [
-        "Water on the left where the tee shot lands: aim right-center.",
+        "Water on the left where the tee shot lands, with bunkers just past it on the right: aim center, not at either edge.",
         "Three-shot hole for everyone: lay up to a comfortable full-swing number."
       ]
     },
@@ -129,7 +129,7 @@
       "hole": 18, "aim_m": -8, "green_aim_m": -2, "safe_miss": "left", "key_hazard": "Water right and in front of the green",
       "notes": [
         "Water down the right and in front of the green: aim left all the way.",
-        "Aim at the middle of the green and forget the flag. The bunker behind runs downhill."
+        "Aim at the middle of the green and forget the flag. Bunkers back-left and right of the flag both leave a downhill lie."
       ]
     }
   ]

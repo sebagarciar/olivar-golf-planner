@@ -364,8 +364,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Green is 470m from the tee, out of frame in the photo, so these greenside bunkers are unconfirmed. Bunkers visible in the photo belong to neighboring holes' greens in the background, not hole 2's own."
+      ]
     },
     {
       "hole": 3,
@@ -3122,8 +3124,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Green is 399m from the tee, out of frame in the photo, so these greenside bunkers (matching the note about 'dos bunkers' protecting the entrance) are unconfirmed in position."
+      ]
     },
     {
       "hole": 15,
@@ -3186,7 +3190,9 @@
         }
       ],
       "needs_review": false,
-      "review_notes": []
+      "review_notes": [
+        "Green is visible in the aerial photo (short hole) and does show a back bunker and a front-right bunker roughly matching these two - positions kept from the previous pass, cross-checked rather than rebuilt."
+      ]
     },
     {
       "hole": 16,
@@ -3260,8 +3266,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Green is 388m from the tee, out of frame in the photo, so these greenside bunkers are unconfirmed."
+      ]
     },
     {
       "hole": 17,
@@ -3540,10 +3548,28 @@
           ],
           "r": 25,
           "status": "suggested"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [[380, 900]],
+          "r": 22,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 17 aerial photo (landing zone, just past the water)"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [[420, 850]],
+          "r": 20,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 17 aerial photo (landing zone, just past the water)"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Added 2 fairway bunkers in the landing zone confirmed from the photo, matching the note 'evitar el agua y los bunkers en caida de bola'. The 3 greenside bunkers are unconfirmed - green is 472m out, out of frame in the photo."
+      ]
     },
     {
       "hole": 18,
@@ -3782,18 +3808,24 @@
         {
           "type": "bunker",
           "shape": "circle",
-          "points": [
-            [
-              275,
-              160
-            ]
-          ],
-          "r": 30,
-          "status": "suggested"
+          "points": [[220, 190]],
+          "r": 32,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 18 aerial photo (back-left of green)"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [[330, 220]],
+          "r": 20,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 18 aerial photo (right of green, near flag)"
         }
       ],
       "needs_review": false,
-      "review_notes": []
+      "review_notes": [
+        "Whole hole is visible in the photo (short par 4): moved the single back bunker over to back-left to match, and added a second smaller one right of the flag that the previous pass missed."
+      ]
     }
   ]
 }
