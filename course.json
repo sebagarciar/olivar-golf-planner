@@ -245,31 +245,28 @@
         },
         {
           "type": "bunker",
-          "shape": "circle",
+          "shape": "polygon",
           "points": [
-            [
-              710,
-              250
-            ]
+            [195, 475],
+            [260, 468],
+            [305, 490],
+            [315, 525],
+            [300, 560],
+            [265, 585],
+            [220, 590],
+            [185, 565],
+            [175, 525],
+            [180, 495]
           ],
-          "r": 30,
-          "status": "suggested"
-        },
-        {
-          "type": "bunker",
-          "shape": "circle",
-          "points": [
-            [
-              735,
-              400
-            ]
-          ],
-          "r": 25,
-          "status": "suggested"
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 1 aerial photo"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Fairway waste bunker at the dogleg (~200-250m from tee) confirmed from the real aerial photo in course_guide.pdf and the note 'bunker de caida de bola' - shape is an eyeballed approximation of an irregular sand/waste area, not a survey.",
+        "Removed the two greenside bunker guesses from the previous pass: they weren't visible in the tee-shot photo (green is out of frame) and the schematic map doesn't render bunkers at all, so there was no source for them. Confirm in person whether hole 1's green actually has bunkers."
+      ]
     },
     {
       "hole": 2,

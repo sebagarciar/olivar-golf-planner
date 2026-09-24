@@ -9,8 +9,9 @@ goes, see where a shot can end up, and get a plan per hole that fits the score I
 
 ## What it does
 
-- **Hole maps** from the club's course guide, with par, stroke index and yellow distance from the
-  scorecard.
+- **Hole maps** traced from the club's course guide into a video-game style drawing (fairway,
+  green, trees, bunkers, water, OB), with par, stroke index and yellow distance from the
+  scorecard. Calibrate mode shows the original drawing, distance arcs and all.
 - **Distances that respect the drawing.** The maps aren't to scale, so distances come from the
   scorecard plus the distance arcs printed on each map. Tap a point: distance from the tee and to
   the green, straight line and along the fairway, plus front and back of the green.
@@ -32,9 +33,9 @@ Live at https://sebagarciar.github.io/olivar-golf-planner/ (on the phone, add it
 screen). Or open `index.html` in a browser. Everything I change (calibration, hazards, routes, bag) is saved
 in that browser, and can be exported to JSON from the Bag tab.
 
-The data lives in three files: `course.json` (holes, calibration, hazards), `bag.json` (my
-clubs) and `strategy.json` (where to aim, safe miss and notes per hole). After editing any of
-them:
+The data lives in four files: `course.json` (holes, calibration, hazards), `bag.json` (my
+clubs), `strategy.json` (where to aim, safe miss and notes per hole) and `terrain.json` (the
+shapes traced from the maps). After editing any of them:
 
 ```bash
 python3 scripts/build_data.py
@@ -47,6 +48,7 @@ repo) and a few Python packages:
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python scripts/extract_maps.py
 .venv/bin/python scripts/seed_course.py
+.venv/bin/python scripts/trace_terrain.py
 ```
 
 Full spec in [`PRD_olivar_golf_planner.md`](PRD_olivar_golf_planner.md).

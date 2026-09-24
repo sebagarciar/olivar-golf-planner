@@ -2,3 +2,4 @@ pymupdf
 numpy
 pillow
 scipy
+scikit-image
