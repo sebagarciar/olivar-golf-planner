@@ -171,7 +171,7 @@ body.gameday .gameday-only { display: block; }
   <section class="view" id="view-bag" hidden>
     <div class="panel">
       <h2>My bag</h2>
-      <p class="muted" style="margin-top:0">Distances are carry + roll averages in yards. Dispersion is in meters: width is the left/right spread either side of the target, depth is how far long or short a normal shot finishes. Every hole's plan updates as you type.</p>
+      <p class="muted" style="margin-top:0">Distances are carry + roll averages in yards. Spread is in yards too: width is how far left or right of the target a normal shot finishes, depth is how far long or short. Every hole's plan updates as you type.</p>
       <div class="scroll-x"><table class="bag-table" id="bagTable"></table></div>
       <div class="row" style="margin-top:12px">
         <button class="btn" id="resetBag">Reset bag to defaults</button>
@@ -223,7 +223,7 @@ const state = {
   mode: "plan",
   rings: !!saved.rings,
   gameday: false,
-  bag: saved.bag || clone(DATA.bag),
+  bag: saved.bag || null,
   holes: saved.holes || {},   // per hole overrides: { route: [...calibration points], confirmed, hazards, myRoute }
   tap: null,                  // last measured point [x, y]
   armed: null,                // calibration point being placed
@@ -259,8 +259,18 @@ function fmtN(m) { return state.unit === "m" ? Math.round(m) : Math.round(m / YD
 const hyp = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
 function scoreName(over) { return ["Par", "Bogey", "Double bogey", "Triple bogey", "Quad bogey"][over] || `+${over}`; }
 
+// The bag is kept in yards; the maths runs in meters like the course.
 function clubs() {
-  return state.bag.clubs.map((c) => ({ ...c, m: c.yd * YD }));
+  return state.bag.clubs.map((c) => ({ ...c, m: c.yd * YD, width_m: c.width_yd * YD, depth_m: c.depth_yd * YD }));
+}
+// Bags saved before 2026-09-24 kept the spread in meters: convert them once.
+function normalizeBag(bag) {
+  for (const c of bag.clubs) {
+    if (c.width_yd == null && c.width_m != null) c.width_yd = Math.round(c.width_m / YD);
+    if (c.depth_yd == null && c.depth_m != null) c.depth_yd = Math.round(c.depth_m / YD);
+    delete c.width_m; delete c.depth_m;
+  }
+  return bag;
 }
 function eligible(lie) {
   return clubs().filter((c) => c.from === "any" || c.from === lie);
@@ -567,6 +577,8 @@ function routePlan(n, target) {
   return { geo, shots, target, strat, greenAim, hazards, custom: true };
 }
 
+state.bag = normalizeBag(state.bag || clone(DATA.bag));
+
 const cache = new Map();
 function planFor(n) {
   const target = holeTargets(state.target)[n];
@@ -843,13 +855,13 @@ function renderRound() {
 // ---------- bag view ----------
 function renderBag() {
   const t = el("table", { class: "bag-table", id: "bagTable" });
-  t.append(el("thead", {}, el("tr", {}, el("th", {}, "Club"), el("th", {}, "Yards"), el("th", {}, "Meters"), el("th", {}, "Width ± m"), el("th", {}, "Depth ± m"), el("th", {}, "Notes"))));
+  t.append(el("thead", {}, el("tr", {}, el("th", {}, "Club"), el("th", {}, "Yards"), el("th", {}, "Width ± yd"), el("th", {}, "Depth ± yd"), el("th", {}, "Notes"))));
   const tb = el("tbody");
   state.bag.clubs.forEach((c) => {
     const input = (key, step) => el("input", { type: "number", step, value: c[key], inputmode: "decimal", onchange: (e) => { const v = parseFloat(e.target.value); if (!isNaN(v) && v > 0) { c[key] = v; save(); renderBag(); } } });
     tb.append(el("tr", {},
-      el("td", {}, c.name), el("td", {}, input("yd", 1)), el("td", { class: "num" }, String(Math.round(c.yd * YD))),
-      el("td", {}, input("width_m", 1)), el("td", {}, input("depth_m", 1)),
+      el("td", {}, c.name), el("td", {}, input("yd", 1)),
+      el("td", {}, input("width_yd", 1)), el("td", {}, input("depth_yd", 1)),
       el("td", { class: "muted" }, c.last_resort ? "Only if nothing else works" : c.from === "tee" ? "Tee only" : c.from === "fairway" ? "Off the ground" : "")));
   });
   t.append(tb);
@@ -876,7 +888,7 @@ function importFile(file) {
   r.onload = () => {
     try {
       const j = JSON.parse(r.result);
-      if (j.clubs) { state.bag = j; $("ioMsg").textContent = "Bag imported."; }
+      if (j.clubs) { state.bag = normalizeBag(j); $("ioMsg").textContent = "Bag imported."; }
       else if (j.holes && j.holes[0]?.calibration) {
         for (const h of j.holes) {
           const o = holeOverrides(h.hole);
