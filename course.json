@@ -260,12 +260,28 @@
           ],
           "status": "suggested",
           "source": "course_guide.pdf hoyo 1 aerial photo"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [[660, 330]],
+          "r": 25,
+          "status": "suggested",
+          "source": "Seba confirmed 2026-09-24: bunker left of green"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [[825, 290]],
+          "r": 22,
+          "status": "suggested",
+          "source": "Seba confirmed 2026-09-24: bunker right of green"
         }
       ],
       "needs_review": true,
       "review_notes": [
         "Fairway waste bunker at the dogleg (~200-250m from tee) confirmed from the real aerial photo in course_guide.pdf and the note 'bunker de caida de bola' - shape is an eyeballed approximation of an irregular sand/waste area, not a survey.",
-        "Removed the two greenside bunker guesses from the previous pass: they weren't visible in the tee-shot photo (green is out of frame) and the schematic map doesn't render bunkers at all, so there was no source for them. Confirm in person whether hole 1's green actually has bunkers."
+        "Green has bunkers on both sides (Seba confirmed 2026-09-24, not visible in any available photo) - placed as reasonable circles beside the green; exact shape/size unconfirmed."
       ]
     },
     {
@@ -448,7 +464,9 @@
         }
       ],
       "needs_review": false,
-      "review_notes": []
+      "review_notes": [
+        "Cross-checked against the course_guide.pdf hoyo 3 aerial photo: a tight cluster of ~5 bunkers does cross the fairway before the green, matching the note about bunkers 'closing off' the fairway. Positions kept from the previous pass since they already sit in roughly the right zone; not pixel-matched to the photo."
+      ]
     },
     {
       "hole": 4,
@@ -490,40 +508,32 @@
           "shape": "circle",
           "points": [
             [
-              440,
-              245
+              460,
+              275
             ]
           ],
-          "r": 25,
-          "status": "suggested"
+          "r": 26,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 4 notes ('protegido por dos bunkers laterales') + partial photo"
         },
         {
           "type": "bunker",
           "shape": "circle",
           "points": [
             [
-              585,
-              305
+              580,
+              270
             ]
           ],
-          "r": 25,
-          "status": "suggested"
-        },
-        {
-          "type": "bunker",
-          "shape": "circle",
-          "points": [
-            [
-              555,
-              190
-            ]
-          ],
-          "r": 30,
-          "status": "suggested"
+          "r": 26,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 4 notes ('protegido por dos bunkers laterales') + partial photo"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Text explicitly says the green is protected by two lateral bunkers (not three, as the previous pass had). The green itself is cropped out of the aerial photo by the on-slide label box, so exact left/right shapes are a text-based estimate, not a direct photo read."
+      ]
     },
     {
       "hole": 5,
@@ -719,8 +729,9 @@
               490
             ]
           ],
-          "r": 35,
-          "status": "suggested"
+          "r": 38,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 5 aerial photo (front-left of green)"
         },
         {
           "type": "bunker",
@@ -728,15 +739,31 @@
           "points": [
             [
               490,
-              310
+              470
             ]
           ],
-          "r": 35,
-          "status": "suggested"
+          "r": 28,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 5 aerial photo (front-right of green)"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [
+            [
+              400,
+              235
+            ]
+          ],
+          "r": 22,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 5 aerial photo (back of green)"
         }
       ],
       "needs_review": false,
-      "review_notes": []
+      "review_notes": [
+        "3 greenside bunkers confirmed and repositioned from the real aerial photo (whole hole is visible since it's a short par 3): front-left, front-right, back. Previous pass only had 2, and the right one was placed at green height instead of front."
+      ]
     },
     {
       "hole": 6,
@@ -953,8 +980,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Green is 373m from the tee, too far to see in the aerial photo, so these greenside bunkers are unconfirmed - kept from the previous pass but not verified against a real photo."
+      ]
     },
     {
       "hole": 7,
@@ -1199,8 +1228,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Green is 478m from the tee, well out of frame in the aerial photo, so these greenside bunkers are unconfirmed - kept from the previous pass but not verified against a real photo."
+      ]
     },
     {
       "hole": 8,
@@ -1360,8 +1391,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Aerial photo is partly cropped by the on-slide label box, so only part of the green is visible. The note says one bunker catches balls that miss left, with OB to the right - the left bunker matches that, but the second (upper-right) one isn't corroborated by the text and should be double-checked in person."
+      ]
     },
     {
       "hole": 9,
@@ -1600,42 +1633,40 @@
         {
           "type": "bunker",
           "shape": "circle",
-          "points": [
-            [
-              385,
-              200
-            ]
-          ],
+          "points": [[400, 230]],
           "r": 30,
-          "status": "suggested"
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 9 aerial photo (back-right of green)"
         },
         {
           "type": "bunker",
           "shape": "circle",
-          "points": [
-            [
-              425,
-              295
-            ]
-          ],
-          "r": 25,
-          "status": "suggested"
+          "points": [[295, 275]],
+          "r": 24,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 9 aerial photo (left of green)"
         },
         {
           "type": "bunker",
           "shape": "circle",
-          "points": [
-            [
-              320,
-              355
-            ]
-          ],
+          "points": [[310, 330]],
           "r": 25,
-          "status": "suggested"
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 9 aerial photo (front-left of green)"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [[390, 325]],
+          "r": 27,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 9 aerial photo (front-right of green)"
         }
       ],
       "needs_review": false,
-      "review_notes": []
+      "review_notes": [
+        "The photo clearly shows 4 bunkers ringing this green (previous pass only had 3, missing the left one) - repositioned all 4 to match."
+      ]
     },
     {
       "hole": 10,
@@ -2162,8 +2193,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Green is 403m from the tee, out of frame in the photo, so this greenside bunker is unconfirmed. The two water hazards are directly confirmed from the photo (matches the note about two lakes guarding the green)."
+      ]
     },
     {
       "hole": 11,
@@ -2440,30 +2473,24 @@
         {
           "type": "bunker",
           "shape": "circle",
-          "points": [
-            [
-              210,
-              360
-            ]
-          ],
-          "r": 30,
-          "status": "suggested"
+          "points": [[200, 375]],
+          "r": 28,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 11 aerial photo (front-left of green)"
         },
         {
           "type": "bunker",
           "shape": "circle",
-          "points": [
-            [
-              400,
-              340
-            ]
-          ],
-          "r": 35,
-          "status": "suggested"
+          "points": [[245, 300]],
+          "r": 26,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 11 aerial photo (back-left of green)"
         }
       ],
       "needs_review": false,
-      "review_notes": []
+      "review_notes": [
+        "Photo (whole hole visible, par 3) shows both bunkers on the left side of the green, with the pond guarding front/right - moved the previous pass's right-side bunker over to the left to match."
+      ]
     },
     {
       "hole": 12,
@@ -2652,8 +2679,10 @@
           "status": "suggested"
         }
       ],
-      "needs_review": false,
-      "review_notes": []
+      "needs_review": true,
+      "review_notes": [
+        "Green is 482m from the tee, out of frame in the aerial photo, so these greenside bunkers are unconfirmed. The photo does show 2-3 small bunkers on the left side of the fairway well short of the green, not currently mapped since their exact role wasn't clear from the text."
+      ]
     },
     {
       "hole": 13,
@@ -2815,18 +2844,24 @@
         {
           "type": "bunker",
           "shape": "circle",
-          "points": [
-            [
-              510,
-              450
-            ]
-          ],
-          "r": 35,
-          "status": "suggested"
+          "points": [[520, 400]],
+          "r": 28,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 13 aerial photo (right of green)"
+        },
+        {
+          "type": "bunker",
+          "shape": "circle",
+          "points": [[350, 430]],
+          "r": 30,
+          "status": "suggested",
+          "source": "course_guide.pdf hoyo 13 aerial photo (front-left of green)"
         }
       ],
       "needs_review": false,
-      "review_notes": []
+      "review_notes": [
+        "Photo (whole hole visible, short par 3) shows 2 bunkers, not 1 - added the front-left one that was missing."
+      ]
     },
     {
       "hole": 14,
