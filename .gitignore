@@ -1,0 +1,6 @@
+.venv/
+.DS_Store
+__pycache__/
+# The club's original PDFs and the full-size map crops stay local; the app uses the .webp maps.
+source/
+holes/*.png

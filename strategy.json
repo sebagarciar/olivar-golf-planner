@@ -1,0 +1,136 @@
+{
+  "written": "2026-09-24",
+  "about": "Hole-by-hole plan for a ~95 round. aim_m shifts tee shots and layups sideways from the middle of the fairway (negative = left, positive = right, in the direction of play); green_aim_m does the same for the approach. Clubs are not written here: the app picks them from the bag, the map and the hazards, so they stay right when the bag changes.",
+  "holes": [
+    {
+      "hole": 1, "aim_m": 8, "green_aim_m": 0, "safe_miss": "right", "key_hazard": "OB all down the left",
+      "notes": [
+        "Dogleg left with OB along the whole left side: start the ball at the right half of the fairway.",
+        "Don't cut the corner. The extra 20 m isn't worth a reload.",
+        "Bunkers back-left and front-right of the green: aim at the middle."
+      ]
+    },
+    {
+      "hole": 2, "aim_m": 3, "green_aim_m": 0, "safe_miss": "right", "key_hazard": "Trees both sides",
+      "notes": [
+        "Long, straight par 5: three solid shots, no hero second.",
+        "Lay up to a full-swing number, not an awkward half wedge."
+      ]
+    },
+    {
+      "hole": 3, "aim_m": 0, "green_aim_m": -2, "safe_miss": "short", "key_hazard": "Bunkers across the fairway",
+      "notes": [
+        "Short par 4: the tee shot only has to stay short of the bunkers that pinch the fairway.",
+        "Green slopes away at the back: short of the flag beats long."
+      ]
+    },
+    {
+      "hole": 4, "aim_m": 0, "green_aim_m": 0, "safe_miss": "short", "key_hazard": "Small green, bunkers both sides",
+      "notes": [
+        "Tee is off to the right: aim at the middle of the corner, where the fairway is widest.",
+        "Small green squeezed by two bunkers: middle of the green, short is fine."
+      ]
+    },
+    {
+      "hole": 5, "aim_m": -4, "green_aim_m": -4, "safe_miss": "left", "key_hazard": "OB right",
+      "notes": [
+        "Narrow par 3 with OB right: if in doubt, miss left.",
+        "Bunker short-left and one right of the green: the middle-left is the target."
+      ]
+    },
+    {
+      "hole": 6, "aim_m": -6, "green_aim_m": -3, "safe_miss": "left", "key_hazard": "OB tight on the right",
+      "notes": [
+        "One of the hardest holes: OB runs close all down the right, favour the left half.",
+        "The second shot plays downhill, so the ball flies a little further.",
+        "Bogey is a good score here."
+      ]
+    },
+    {
+      "hole": 7, "aim_m": -8, "green_aim_m": 0, "safe_miss": "left", "key_hazard": "OB along the right of the dogleg",
+      "notes": [
+        "Dogleg right with OB hugging the whole bend: aim down the left.",
+        "Green is well guarded at the front: lay up to a full-swing number instead of chasing it."
+      ]
+    },
+    {
+      "hole": 8, "aim_m": -4, "green_aim_m": -3, "safe_miss": "short", "key_hazard": "OB right, bunker left",
+      "notes": [
+        "Long par 3 with OB right and a bunker catching everything left.",
+        "Short of the green is the safe miss: a chip and two putts is a bogey, OB is a double."
+      ]
+    },
+    {
+      "hole": 9, "aim_m": 8, "green_aim_m": 3, "safe_miss": "right", "key_hazard": "Water all down the left",
+      "notes": [
+        "Hardest hole on the card: water from the landing zone all the way to the green on the left.",
+        "Aim at the right side of the fairway and the right half of the green (shared with 18).",
+        "Bogey is a good score."
+      ]
+    },
+    {
+      "hole": 10, "aim_m": -6, "green_aim_m": -3, "safe_miss": "short-left", "key_hazard": "OB right off the tee, lakes behind and right of the green",
+      "notes": [
+        "Downhill par 4 with OB right off the tee: favour the left.",
+        "Water behind and to the right of the green: aim front-left and never go long."
+      ]
+    },
+    {
+      "hole": 11, "aim_m": -8, "green_aim_m": -4, "safe_miss": "short-left", "key_hazard": "Water short and right",
+      "notes": [
+        "Long par 3 over water on the right: play to the left side.",
+        "Laying up short-left and chipping on is a perfectly good plan."
+      ]
+    },
+    {
+      "hole": 12, "aim_m": -6, "green_aim_m": 0, "safe_miss": "left", "key_hazard": "OB all down the right",
+      "notes": [
+        "OB runs down the whole right side: the tee shot is the key, keep it left-center.",
+        "Lay up to a full-swing number and attack from there."
+      ]
+    },
+    {
+      "hole": 13, "aim_m": -5, "green_aim_m": -3, "safe_miss": "left", "key_hazard": "OB and bunker right",
+      "notes": [
+        "Everything bad is on the right: aim at the left half of the green.",
+        "Tricky green: two putts is a good result."
+      ]
+    },
+    {
+      "hole": 14, "aim_m": -6, "green_aim_m": 0, "safe_miss": "left", "key_hazard": "OB and bushes right, bunkers at the green entrance",
+      "notes": [
+        "Hardest hole on the back nine: OB and bushes on the right, aim left-center.",
+        "Two bunkers guard the front of the green: if you can't carry them comfortably, lay up and pitch on.",
+        "Bogey is a good score."
+      ]
+    },
+    {
+      "hole": 15, "aim_m": 0, "green_aim_m": 0, "safe_miss": "short", "key_hazard": "Bunkers either side of the green",
+      "notes": [
+        "Shortest par 4: a birdie chance only if you play it simply.",
+        "Set up a full-swing approach rather than a long tee shot that leaves an awkward half wedge."
+      ]
+    },
+    {
+      "hole": 16, "aim_m": 0, "green_aim_m": 0, "safe_miss": "short", "key_hazard": "Tiny green, bunkers all around",
+      "notes": [
+        "Small, well-protected green: aim front-middle.",
+        "Short of the green and a chip is fine. Long or in a bunker costs more."
+      ]
+    },
+    {
+      "hole": 17, "aim_m": 6, "green_aim_m": 0, "safe_miss": "right", "key_hazard": "Water left in the driving zone",
+      "notes": [
+        "Water on the left where the tee shot lands: aim right-center.",
+        "Three-shot hole for everyone: lay up to a comfortable full-swing number."
+      ]
+    },
+    {
+      "hole": 18, "aim_m": -8, "green_aim_m": -2, "safe_miss": "left", "key_hazard": "Water right and in front of the green",
+      "notes": [
+        "Water down the right and in front of the green: aim left all the way.",
+        "Aim at the middle of the green and forget the flag. The bunker behind runs downhill."
+      ]
+    }
+  ]
+}

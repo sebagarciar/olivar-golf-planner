@@ -1,0 +1,15 @@
+{
+  "unit": "yd",
+  "note": "Carry + roll averages. Dispersion is in meters: width = left/right spread either side of the target, depth = distance variance either way.",
+  "clubs": [
+    { "id": "D",   "name": "Driver",           "yd": 220, "from": "tee",     "width_m": 25, "depth_m": 20 },
+    { "id": "4H",  "name": "4 Hybrid",         "yd": 205, "from": "any",     "width_m": 22, "depth_m": 18, "last_resort": true },
+    { "id": "6T",  "name": "6 Iron (tee)",     "yd": 180, "from": "tee",     "width_m": 15, "depth_m": 12 },
+    { "id": "6I",  "name": "6 Iron",           "yd": 170, "from": "fairway", "width_m": 15, "depth_m": 12 },
+    { "id": "7I",  "name": "7 Iron",           "yd": 160, "from": "any",     "width_m": 15, "depth_m": 11 },
+    { "id": "8I",  "name": "8 Iron",           "yd": 150, "from": "any",     "width_m": 15, "depth_m": 10 },
+    { "id": "9I",  "name": "9 Iron",           "yd": 140, "from": "any",     "width_m": 15, "depth_m": 10 },
+    { "id": "PW",  "name": "Pitching Wedge",   "yd": 130, "from": "any",     "width_m": 8,  "depth_m": 8 },
+    { "id": "SW",  "name": "Sand Wedge",       "yd": 100, "from": "any",     "width_m": 8,  "depth_m": 7 }
+  ]
+}

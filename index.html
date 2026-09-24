@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Olivar Planner</title>
+<style>
+:root {
+  --bg: #f4f3ee; --panel: #ffffff; --ink: #1d2320; --muted: #66706a; --line: #dcddd6;
+  --accent: #1f6f4a; --accent-ink: #ffffff; --warn: #b45309; --bad: #b91c1c; --good: #15803d;
+  --chip: #eef1ec; --map-bg: #231f20;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141816; --panel: #1c211e; --ink: #e8ece9; --muted: #9aa49e; --line: #2e3531;
+    --accent: #3fa574; --accent-ink: #08140e; --warn: #f59e0b; --bad: #f87171; --good: #4ade80; --chip: #252c28;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-text-size-adjust: 100%; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+header { position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line); padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+header h1 { font-size: 16px; margin: 0; font-weight: 650; letter-spacing: .01em; }
+.nav { display: flex; align-items: center; gap: 4px; }
+.nav button { width: 36px; height: 36px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; font-size: 18px; line-height: 1; }
+.nav select { height: 36px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 0 8px; font-weight: 600; }
+.target { display: flex; align-items: center; gap: 8px; }
+.target input { width: 140px; accent-color: var(--accent); }
+.target output { font-weight: 650; min-width: 88px; }
+.tabs, .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.tabs button, .seg button { border: 0; background: transparent; padding: 7px 12px; }
+.tabs button + button, .seg button + button { border-left: 1px solid var(--line); }
+.tabs button[aria-pressed="true"], .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.spacer { flex: 1; }
+
+main { padding: 16px; max-width: 1200px; margin: 0 auto; }
+.view[hidden] { display: none !important; }
+.hole-view { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
+.map-card { background: var(--map-bg); border-radius: 12px; padding: 8px; position: relative; touch-action: pan-y; }
+.map-card svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 150px); margin: 0 auto; user-select: none; -webkit-user-select: none; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; align-items: center; }
+.toolbar label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.panel + .panel { margin-top: 12px; }
+.panel h2 { margin: 0 0 4px; font-size: 20px; }
+.panel h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+.chip { background: var(--chip); border-radius: 999px; padding: 3px 10px; font-size: 13px; }
+.chip.strong { background: var(--accent); color: var(--accent-ink); font-weight: 650; }
+.banner { border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-bottom: 10px; background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--ink); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+ol.shots { list-style: none; margin: 0; padding: 0; }
+ol.shots li { padding: 10px 0; border-top: 1px solid var(--line); }
+ol.shots li:first-child { border-top: 0; padding-top: 0; }
+.shot-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.shot-n { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 700; display: inline-grid; place-items: center; flex: none; }
+.shot-club { font-weight: 650; }
+.shot-why { color: var(--muted); font-size: 13px; margin: 2px 0 0 30px; }
+.hit { font-size: 12px; font-weight: 600; margin-left: 30px; }
+.hit.bad { color: var(--bad); } .hit.warn { color: var(--warn); } .hit.ok { color: var(--good); }
+.summary-line { margin-top: 10px; font-size: 14px; }
+.muted { color: var(--muted); }
+ul.notes { margin: 0; padding-left: 18px; }
+ul.notes li + li { margin-top: 4px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 14px; }
+.kv b { font-variant-numeric: tabular-nums; }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 7px 12px; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.armed { outline: 2px solid var(--warn); outline-offset: 1px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr.careful td:first-child { box-shadow: inset 3px 0 0 var(--warn); }
+tfoot td { font-weight: 700; border-bottom: 0; }
+.bag-table input { width: 72px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+.scroll-x { overflow-x: auto; }
+
+/* Game day: one column, big type, no editing tools */
+body.gameday .edit-only { display: none !important; }
+body.gameday .hole-view { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
+body.gameday .panel h2 { font-size: 24px; }
+body.gameday .shot-club { font-size: 18px; }
+.gameday-only { display: none; }
+.gd-strip { margin-bottom: 8px; font-size: 17px; }
+.gd-strip b { font-size: 20px; }
+body.gameday .gameday-only { display: block; }
+
+@media (max-width: 860px) {
+  .hole-view { grid-template-columns: 1fr; }
+  header { padding: 8px 16px; }
+  .target input { width: 110px; }
+  main { padding: 12px 16px; }
+}
+
+/* Print: only the one-page round summary */
+.print-sheet { display: none; }
+@media print {
+  @page { size: A4 portrait; margin: 10mm; }
+  body { background: #fff; color: #000; font-size: 10.5px; }
+  header, main > .view, .no-print { display: none !important; }
+  .print-sheet { display: block !important; }
+  .print-sheet h1 { font-size: 15px; margin: 0 0 2px; }
+  .print-sheet p { margin: 0 0 6px; }
+  .print-sheet table { font-size: 10px; }
+  .print-sheet th, .print-sheet td { padding: 3px 5px; border-bottom: 1px solid #bbb; color: #000; }
+  .print-sheet tr.careful td { font-weight: 700; }
+  .print-sheet tr.careful td:first-child { box-shadow: none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Olivar Planner</h1>
+  <div class="nav">
+    <button id="prev" aria-label="Previous hole">&lsaquo;</button>
+    <select id="holeSelect" aria-label="Hole"></select>
+    <button id="next" aria-label="Next hole">&rsaquo;</button>
+  </div>
+  <div class="target edit-only">
+    <label for="targetRange" class="muted">Target</label>
+    <input id="targetRange" type="range" min="85" max="105" step="1">
+    <output id="targetOut"></output>
+  </div>
+  <div class="spacer"></div>
+  <div class="seg" id="unitSeg" role="group" aria-label="Units">
+    <button data-unit="m">m</button><button data-unit="yd">yd</button>
+  </div>
+  <div class="tabs" id="viewTabs" role="group" aria-label="View">
+    <button data-view="hole">Hole</button><button data-view="round">Round</button><button data-view="bag" class="edit-only">Bag</button>
+  </div>
+  <button class="btn" id="gamedayBtn" aria-pressed="false">Game day</button>
+</header>
+
+<main>
+  <section class="view" id="view-hole">
+    <div class="hole-view">
+      <div>
+        <div class="toolbar edit-only">
+          <div class="seg" id="modeSeg" role="group" aria-label="Map mode">
+            <button data-mode="plan">Caddie</button><button data-mode="route">My route</button><button data-mode="hazards">Hazards</button><button data-mode="calibrate">Calibrate</button>
+          </div>
+          <label><input type="checkbox" id="ringsToggle"> Club rings</label>
+        </div>
+        <div class="gameday-only gd-strip" id="gdStrip"></div>
+        <div class="map-card" id="mapCard">
+          <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+      <aside>
+        <div class="panel" id="holePanel"></div>
+        <div class="panel edit-only" id="modePanel"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="view" id="view-round" hidden>
+    <div class="panel">
+      <div class="row" style="justify-content: space-between; align-items: center; margin-bottom: 8px">
+        <h2 style="margin:0">Round plan</h2>
+        <button class="btn primary no-print" id="printBtn">Print one-page summary</button>
+      </div>
+      <p id="roundIntro" class="muted" style="margin-top:0"></p>
+      <div class="scroll-x"><table id="roundTable"></table></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-bag" hidden>
+    <div class="panel">
+      <h2>My bag</h2>
+      <p class="muted" style="margin-top:0">Distances are carry + roll averages in yards. Dispersion is in meters: width is the left/right spread either side of the target, depth is how far long or short a normal shot finishes. Every hole's plan updates as you type.</p>
+      <div class="scroll-x"><table class="bag-table" id="bagTable"></table></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="resetBag">Reset bag to defaults</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Save and restore</h3>
+      <p class="muted" style="margin-top:0">Your calibration, hazards, routes and bag are saved in this browser. Export them to keep a copy, or to move them to your phone.</p>
+      <div class="row">
+        <button class="btn" id="exportCourse">Export course.json</button>
+        <button class="btn" id="exportBag">Export bag.json</button>
+        <label class="btn">Import JSON<input type="file" id="importFile" accept="application/json,.json" hidden></label>
+        <button class="btn" id="resetAll">Reset everything</button>
+      </div>
+      <p id="ioMsg" class="muted"></p>
+    </div>
+  </section>
+
+  <div class="print-sheet" id="printSheet"></div>
+</main>
+
+<script src="data.js"></script>
+<script>
+"use strict";
+const DATA = window.OLIVAR;
+const YD = 0.9144;
+const STORE_KEY = "olivar-planner-v1";
+const SVGNS = "http://www.w3.org/2000/svg";
+const HAZARD_STYLE = {
+  water:  { label: "Water",   color: "#38bdf8", r: 45, weight: 3 },
+  ob:     { label: "OB",      color: "#f43f5e", r: 30, weight: 3 },
+  bunker: { label: "Bunker",  color: "#facc15", r: 25, weight: 0.8 },
+  trees:  { label: "Trees",   color: "#4ade80", r: 25, weight: 0.8 },
+};
+const MAX_SHOTS = 6;
+const LAST_RESORT = 1.0;  // extra cost for the hybrid: only when nothing else works
+
+// ---------- state ----------
+function clone(x) { return JSON.parse(JSON.stringify(x)); }
+function loadStore() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; }
+}
+const saved = loadStore();
+const state = {
+  hole: saved.hole || 1,
+  target: saved.target || 95,
+  unit: saved.unit || "m",
+  view: "hole",
+  mode: "plan",
+  rings: !!saved.rings,
+  gameday: false,
+  bag: saved.bag || clone(DATA.bag),
+  holes: saved.holes || {},   // per hole overrides: { route: [...calibration points], confirmed, hazards, myRoute }
+  tap: null,                  // last measured point [x, y]
+  armed: null,                // calibration point being placed
+  hazardType: "bunker",
+  selectedHazard: null,
+};
+function save() {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      hole: state.hole, target: state.target, unit: state.unit, rings: state.rings, bag: state.bag, holes: state.holes,
+    }));
+  } catch (e) { /* storage unavailable: the page still works for this session */ }
+  cache.clear();
+}
+
+// ---------- helpers ----------
+const $ = (id) => document.getElementById(id);
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null) e.append(k.nodeType ? k : document.createTextNode(k));
+  return e;
+}
+function sv(tag, attrs = {}) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  return e;
+}
+function fmt(m) { return state.unit === "m" ? `${Math.round(m)} m` : `${Math.round(m / YD)} yd`; }
+function fmtN(m) { return state.unit === "m" ? Math.round(m) : Math.round(m / YD); }
+const hyp = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+function scoreName(over) { return ["Par", "Bogey", "Double bogey", "Triple bogey", "Quad bogey"][over] || `+${over}`; }
+
+function clubs() {
+  return state.bag.clubs.map((c) => ({ ...c, m: c.yd * YD }));
+}
+function eligible(lie) {
+  return clubs().filter((c) => c.from === "any" || c.from === lie);
+}
+function partialWedge(dist) {
+  const sw = clubs().find((c) => c.id === "SW");
+  const spread = Math.max(4, dist * 0.09);
+  return { id: "SWp", name: "Sand Wedge (partial)", m: dist, width_m: spread, depth_m: spread, partial: true, maxFull: sw ? sw.m : 91 };
+}
+
+// ---------- targets ----------
+// Extra strokes above par, one per hole, go to the hardest holes first (stroke index 1 upwards).
+function holeTargets(total) {
+  const holes = DATA.course.holes;
+  const extra = total - holes.reduce((s, h) => s + h.par, 0);
+  const base = Math.floor(extra / 18), rest = extra - base * 18;
+  const out = {};
+  for (const h of holes) out[h.hole] = h.par + base + (h.stroke_index <= rest ? 1 : 0);
+  return out;
+}
+
+// ---------- per-hole data (defaults + saved overrides) ----------
+function courseHole(n) { return DATA.course.holes[n - 1]; }
+function strategyHole(n) { return DATA.strategy.holes.find((s) => s.hole === n) || { aim_m: 0, green_aim_m: 0, notes: [] }; }
+function defaultRoute(h) {
+  const pts = [{ kind: "tee", px: h.calibration.tee_px, m: 0, label: "Tee" }];
+  const fromTee = h.guide_markers.filter((g) => g.measured_from === "tee" && g.px).sort((a, b) => a.m - b.m);
+  const toGreen = h.guide_markers.filter((g) => g.measured_from === "green" && g.px).sort((a, b) => b.m - a.m);
+  for (const g of fromTee) pts.push({ kind: "marker", px: g.px, m: g.m, label: `${g.m} from tee` });
+  for (const g of toGreen) pts.push({ kind: "marker", px: g.px, m: h.yellow_m - g.m, label: `${g.m} to green` });
+  pts.push({ kind: "green", px: h.calibration.green_px, m: h.yellow_m, label: "Green" });
+  return pts;
+}
+function holeOverrides(n) { return state.holes[n] || (state.holes[n] = {}); }
+function holeRoute(n) { return state.holes[n]?.route || (courseHole(n).calibration.route) || defaultRoute(courseHole(n)); }
+function holeHazards(n) { return state.holes[n]?.hazards || clone(courseHole(n).hazards); }
+function calibrationConfirmed(n) { return state.holes[n]?.confirmed ?? courseHole(n).calibration.confirmed; }
+
+// ---------- geometry: distances on a map that isn't to scale ----------
+// The route runs tee -> guide markers / bends -> green. Points with a known distance (tee, markers,
+// green) are anchors; meters between them are interpolated along the route, so each stretch of the
+// drawing gets its own scale.
+class HoleGeo {
+  constructor(n) {
+    this.n = n;
+    this.info = courseHole(n);
+    this.L = this.info.yellow_m;
+    this.pts = holeRoute(n).map((p) => p.px);
+    this.segs = [];
+    let s = 0;
+    for (let i = 0; i < this.pts.length - 1; i++) {
+      const a = this.pts[i], b = this.pts[i + 1], len = hyp(a, b) || 1e-6;
+      this.segs.push({ a, b, s0: s, len, dx: (b[0] - a[0]) / len, dy: (b[1] - a[1]) / len });
+      s += len;
+    }
+    this.totalPx = s;
+    // anchors: (s_px, meters), kept only while meters keep increasing
+    const anchors = [];
+    holeRoute(n).forEach((p, i) => {
+      const sPx = i === 0 ? 0 : this.segs[i - 1].s0 + this.segs[i - 1].len;
+      if (p.m != null && (anchors.length === 0 || (p.m > anchors[anchors.length - 1][1] && sPx > anchors[anchors.length - 1][0] + 1))) anchors.push([sPx, p.m]);
+    });
+    if (anchors.length < 2) anchors.splice(0, anchors.length, [0, 0], [this.totalPx, this.L]);
+    this.anchors = anchors;
+  }
+  project(p) {
+    let best = null;
+    for (const g of this.segs) {
+      let t = ((p[0] - g.a[0]) * g.dx + (p[1] - g.a[1]) * g.dy);
+      t = Math.max(0, Math.min(g.len, t));
+      const q = [g.a[0] + g.dx * t, g.a[1] + g.dy * t];
+      const d = hyp(p, q);
+      if (!best || d < best.d) best = { d, s: g.s0 + t, q, g, side: Math.sign(g.dx * (p[1] - g.a[1]) - g.dy * (p[0] - g.a[0])) };
+    }
+    return best;
+  }
+  mAt(s) {
+    const A = this.anchors;
+    let i = 0;
+    while (i < A.length - 2 && s > A[i + 1][0]) i++;
+    const [s0, m0] = A[i], [s1, m1] = A[i + 1];
+    return m0 + (s - s0) * (m1 - m0) / (s1 - s0);
+  }
+  kAt(s) {
+    const A = this.anchors;
+    let i = 0;
+    while (i < A.length - 2 && s > A[i + 1][0]) i++;
+    return (A[i + 1][1] - A[i][1]) / (A[i + 1][0] - A[i][0]);
+  }
+  sAtM(m) {
+    const A = this.anchors;
+    let i = 0;
+    while (i < A.length - 2 && m > A[i + 1][1]) i++;
+    const [s0, m0] = A[i], [s1, m1] = A[i + 1];
+    return s0 + (m - m0) * (s1 - s0) / (m1 - m0);
+  }
+  pointAtS(s) {
+    let g = this.segs[0];
+    for (const x of this.segs) if (s >= x.s0) g = x;
+    const t = s - g.s0;  // may run past the last segment: extrapolate straight on
+    return { p: [g.a[0] + g.dx * t, g.a[1] + g.dy * t], g };
+  }
+  // A point `m` meters down the hole, shifted `lat` meters sideways (+ = right in the direction of play).
+  offsetPoint(m, lat = 0) {
+    const s = this.sAtM(m);
+    const { p, g } = this.pointAtS(s);
+    const k = this.kAt(s);
+    return [p[0] - g.dy * lat / k, p[1] + g.dx * lat / k];
+  }
+  dist(a, b) {
+    const pa = this.project(a), pb = this.project(b);
+    const k = Math.abs(pb.s - pa.s) > 30 ? Math.abs((this.mAt(pb.s) - this.mAt(pa.s)) / (pb.s - pa.s)) : this.kAt((pa.s + pb.s) / 2);
+    return hyp(a, b) * k;
+  }
+  get tee() { return this.pts[0]; }
+  get green() { return this.pts[this.pts.length - 1]; }
+  mOf(p) { return this.mAt(this.project(p).s); }
+  pxPerM(p) { return 1 / this.kAt(this.project(p).s); }
+}
+
+// ---------- hazards ----------
+function pointInPoly(p, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i], [xj, yj] = poly[j];
+    if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+function segCross(a, b, c, d) {
+  const o = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+  return (o(a, b, c) > 0) !== (o(a, b, d) > 0) && (o(c, d, a) > 0) !== (o(c, d, b) > 0);
+}
+function hazardHit(z, p, geo) {
+  if (z.shape === "polygon") return pointInPoly(p, z.points);
+  if (z.shape === "circle") return hyp(p, z.points[0]) <= (z.r || HAZARD_STYLE[z.type].r);
+  if (z.shape === "line") {  // OB line: out if the line sits between the fairway and the ball
+    const base = geo.project(p).q;
+    for (let i = 0; i < z.points.length - 1; i++) if (segCross(base, p, z.points[i], z.points[i + 1])) return true;
+  }
+  return false;
+}
+// Landing zone as an ellipse: sample its centre, edge and a middle ring, count what each sample lands in.
+function landingZone(geo, from, to, club) {
+  const k = geo.pxPerM(to);
+  let ux = to[0] - from[0], uy = to[1] - from[1];
+  const len = Math.hypot(ux, uy) || 1; ux /= len; uy /= len;
+  const along = club.depth_m * k, across = club.width_m * k;
+  const samples = [to];
+  for (const f of [1, 0.55]) {
+    const n = f === 1 ? 12 : 8;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2, ca = Math.cos(a) * along * f, sa = Math.sin(a) * across * f;
+      samples.push([to[0] + ux * ca - uy * sa, to[1] + uy * ca + ux * sa]);
+    }
+  }
+  return { center: to, along, across, angle: Math.atan2(uy, ux) * 180 / Math.PI, samples };
+}
+function zoneHits(geo, zone, hazards) {
+  const hits = { water: 0, ob: 0, bunker: 0, trees: 0 };
+  for (const p of zone.samples) {
+    const seen = new Set();
+    for (const z of hazards) if (!seen.has(z.type) && hazardHit(z, p, geo)) { hits[z.type]++; seen.add(z.type); }
+  }
+  for (const k in hits) hits[k] /= zone.samples.length;
+  return hits;
+}
+function penalty(hits) { return Object.entries(hits).reduce((s, [k, v]) => s + v * HAZARD_STYLE[k].weight, 0); }
+function worstHit(hits) {
+  if (hits.water > 0 || hits.ob > 0) return "bad";
+  if (hits.bunker > 0 || hits.trees > 0) return "warn";
+  return "ok";
+}
+function hitText(hits) {
+  const parts = Object.entries(hits).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1])
+    .map(([k, v]) => `${HAZARD_STYLE[k].label.toLowerCase()} ${Math.round(v * 100)}%`);
+  return parts.length ? `Landing zone touches ${parts.join(", ")}` : "Landing zone clear";
+}
+
+// ---------- the caddie: pick the club sequence with the lowest expected cost ----------
+// Cost per shot is cheap while within the hole's target (extra safe shots are fine) and expensive
+// beyond it. Hazards in the landing zone add their weight times the share of shots that find them.
+function solveHole(n, target) {
+  const geo = new HoleGeo(n);
+  const strat = strategyHole(n);
+  const hazards = holeHazards(n);
+  const budget = target - 2;
+  const shotCost = (k) => (k <= budget ? 0.6 : 1.5);
+  const greenAim = geo.offsetPoint(geo.L, strat.green_aim_m || 0);
+  const aim = strat.aim_m || 0;
+  const memo = new Map();
+
+  function land(from, mFrom, d) {
+    let prevM = null, prevD = 0;
+    for (let m = mFrom + Math.max(5, d * 0.6); m <= geo.L + 40; m += 2) {
+      const p = geo.offsetPoint(m, aim);
+      const dd = geo.dist(from, p);
+      if (dd >= d) {
+        const mm = prevM == null ? m : prevM + (m - prevM) * (d - prevD) / (dd - prevD);
+        return { m: mm, p: geo.offsetPoint(mm, aim) };
+      }
+      prevM = m; prevD = dd;
+    }
+    return null;
+  }
+
+  function best(pos, mPos, lie, k) {
+    const key = `${Math.round(mPos)}|${lie}|${k}`;
+    if (memo.has(key)) return memo.get(key);
+    let top = { cost: Infinity, seq: [] };
+    const rem = geo.dist(pos, greenAim);
+    // Go for the green
+    const options = eligible(lie).filter((c) => Math.abs(c.m - rem) <= Math.max(10, rem * 0.07));
+    if (rem < (clubs().find((c) => c.id === "SW")?.m || 91) - 5) options.push(partialWedge(rem));
+    for (const c of options) {
+      const zone = landingZone(geo, pos, greenAim, c);
+      const hits = zoneHits(geo, zone, hazards);
+      // Longer approaches miss more greens; 45-85 m half swings are the awkward gap in the bag.
+      let cost = shotCost(k + 1) + penalty(hits) + rem * 0.002 + Math.abs(c.m - rem) * 0.015 + (c.last_resort ? LAST_RESORT : 0);
+      if (c.partial && rem > 45) cost += 0.25;
+      if (cost < top.cost) top = { cost, seq: [{ club: c, from: pos, to: greenAim, d: rem, approach: true, zone, hits }] };
+    }
+    // Or advance down the fairway
+    if (k + 1 < MAX_SHOTS) {
+      for (const c of eligible(lie)) {
+        if (c.m >= rem - 12) continue;
+        const L = land(pos, mPos, c.m);
+        if (!L || L.m > geo.L - 8) continue;
+        const zone = landingZone(geo, pos, L.p, c);
+        const hits = zoneHits(geo, zone, hazards);
+        const rest = best(L.p, L.m, "fairway", k + 1);
+        // tiny nudge so that, all else equal, the longer layup comes first
+        const cost = shotCost(k + 1) + penalty(hits) + (c.last_resort ? LAST_RESORT : 0) + (201 - c.m) * 0.0005 + rest.cost;
+        if (cost < top.cost) top = { cost, seq: [{ club: c, from: pos, to: L.p, d: c.m, zone, hits, mTo: L.m }, ...rest.seq] };
+      }
+    }
+    memo.set(key, top);
+    return top;
+  }
+
+  const res = best(geo.tee, 0, "tee", 0);
+  const shots = res.seq;
+  shots.forEach((s, i) => { s.remAfter = s.approach ? 0 : geo.dist(s.to, greenAim); s.why = explain(geo, shots, i, hazards, land, greenAim); });
+  return { geo, shots, cost: res.cost, target, strat, greenAim, hazards };
+}
+
+function explain(geo, shots, i, hazards, land, greenAim) {
+  const s = shots[i];
+  if (s.approach) {
+    const depth = geo.info.green_depth_m;
+    const bits = [`${fmt(s.d)} to your target on the green (front ${fmt(s.d - depth / 2)}, back ${fmt(s.d + depth / 2)}).`];
+    if (s.club.partial) bits.push(s.d > 45 ? "Partial swing: nothing in the bag fits a full shot here." : "Short pitch or chip.");
+    return bits.join(" ");
+  }
+  const lie = i === 0 ? "tee" : "fairway";
+  const rem = geo.dist(s.from, greenAim);
+  const reach = eligible(lie).filter((c) => Math.abs(c.m - rem) <= Math.max(10, rem * 0.07)).sort((a, b) => Math.abs(a.m - rem) - Math.abs(b.m - rem))[0];
+  if (reach) {
+    const goHits = zoneHits(geo, landingZone(geo, s.from, greenAim, reach), hazards);
+    const risk = Object.entries(goHits).filter(([, v]) => v > 0).map(([k]) => HAZARD_STYLE[k].label.toLowerCase());
+    const why = [reach.last_resort ? "your least trusted club" : "", risk.length ? `${risk.join(" and ")} in play` : ""].filter(Boolean).join(", with ");
+    return `Going for the green (${fmt(rem)}) means the ${reach.name}${why ? `: ${why}` : ""}. Laying up leaves ${fmt(s.remAfter)} and an easy next shot.`;
+  }
+  const longer = eligible(lie).filter((c) => c.m > s.club.m + 1 && !c.last_resort).sort((a, b) => a.m - b.m)[0];
+  const next = shots[i + 1];
+  const leaves = next ? `Leaves ${fmt(s.remAfter)}${next.approach && !next.club.partial ? `, a full ${next.club.name}` : ""}.` : "";
+  if (!longer) return `Longest club you trust from here. ${leaves}`;
+  const mFrom = i === 0 ? 0 : shots[i - 1].mTo;
+  const alt = land(s.from, mFrom, longer.m);
+  if (!alt || alt.m > geo.L - 8) return `${longer.name} would run too close to the green. ${leaves}`;
+  const altHits = zoneHits(geo, landingZone(geo, s.from, alt.p, longer), hazards);
+  const worst = Object.entries(altHits).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1])[0];
+  if (worst && penalty(altHits) > penalty(s.hits) + 0.05) return `${longer.name} would bring the ${HAZARD_STYLE[worst[0]].label.toLowerCase()} into play. ${leaves}`;
+  const altRem = geo.dist(alt.p, greenAim);
+  if (altRem < 85 && altRem > 45) return `${longer.name} would leave an awkward ${fmt(altRem)} half shot. ${leaves}`;
+  return leaves || "Sets up the next shot.";
+}
+
+// My own route: the points I tapped, each segment gets the closest club.
+function routePlan(n, target) {
+  const geo = new HoleGeo(n);
+  const strat = strategyHole(n);
+  const hazards = holeHazards(n);
+  const pts = [geo.tee, ...(state.holes[n]?.myRoute || [])];
+  const greenAim = geo.offsetPoint(geo.L, strat.green_aim_m || 0);
+  const shots = [];
+  for (let i = 0; i < pts.length; i++) {
+    const from = pts[i];
+    const last = i === pts.length - 1;
+    const to = last ? greenAim : pts[i + 1];
+    const d = geo.dist(from, to);
+    const lie = i === 0 ? "tee" : "fairway";
+    let club = eligible(lie).filter((c) => !c.last_resort).sort((a, b) => Math.abs(a.m - d) - Math.abs(b.m - d))[0];
+    const sw = clubs().find((c) => c.id === "SW");
+    if (sw && d < sw.m - 5) club = partialWedge(d);
+    const zone = landingZone(geo, from, to, club);
+    const hits = zoneHits(geo, zone, hazards);
+    const off = club.partial ? 0 : d - club.m;
+    const why = last
+      ? `${fmt(d)} to your target on the green.`
+      : `Segment ${fmt(d)}${Math.abs(off) > 8 ? ` (${club.name} is ${fmt(Math.abs(off))} ${off > 0 ? "short" : "long"} of it)` : ""}.`;
+    shots.push({ club, from, to, d, zone, hits, approach: last, remAfter: last ? 0 : geo.dist(to, greenAim), why });
+  }
+  return { geo, shots, target, strat, greenAim, hazards, custom: true };
+}
+
+const cache = new Map();
+function planFor(n) {
+  const target = holeTargets(state.target)[n];
+  const key = `${n}|${target}`;
+  if (!cache.has(key)) cache.set(key, state.holes[n]?.myRoute?.length ? routePlan(n, target) : solveHole(n, target));
+  return cache.get(key);
+}
+
+// ---------- map rendering ----------
+let geoNow = null;
+function renderMap() {
+  const n = state.hole, h = courseHole(n);
+  const [W, H] = h.map_size_px;
+  const svg = $("map");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W); svg.setAttribute("height", H);
+  // The image stays put between renders (rebuilding it makes the map flash on every tap);
+  // only the overlay is redrawn.
+  let img = svg.querySelector("image"), overlay = svg.querySelector("g.overlay");
+  if (!img) { img = sv("image", { x: 0, y: 0 }); overlay = sv("g", { class: "overlay" }); svg.append(img, overlay); }
+  if (img.getAttribute("href") !== h.map) { img.setAttribute("href", h.map); img.setAttribute("width", W); img.setAttribute("height", H); }
+  overlay.replaceChildren();
+  const plan = planFor(n);
+  const geo = plan.geo; geoNow = geo;
+  const rect = svg.getBoundingClientRect();
+  const u = rect.width ? Math.max(W / rect.width, H / rect.height) : 2;  // image px per screen px
+  const fs = 13 * u, sw = 2;
+
+
+  // hazards (only outlined in edit modes, so the game-day map stays clean)
+  if (!state.gameday && (state.mode === "hazards" || state.mode === "plan" || state.mode === "route")) {
+    const g = sv("g", { opacity: state.mode === "hazards" ? 1 : 0.55 });
+    holeHazards(n).forEach((z, i) => {
+      const st = HAZARD_STYLE[z.type];
+      const common = { fill: "none", stroke: st.color, "stroke-width": state.selectedHazard === i ? sw * 2.2 : sw, "vector-effect": "non-scaling-stroke", "stroke-dasharray": z.status === "suggested" ? "6 4" : "none" };
+      if (z.shape === "polygon") g.append(sv("polygon", { ...common, points: z.points.map((p) => p.join(",")).join(" ") }));
+      else if (z.shape === "line") g.append(sv("polyline", { ...common, points: z.points.map((p) => p.join(",")).join(" ") }));
+      else g.append(sv("circle", { ...common, cx: z.points[0][0], cy: z.points[0][1], r: z.r || st.r }));
+    });
+    overlay.append(g);
+  }
+
+  // club rings from the tee
+  if (state.rings && !state.gameday) {
+    const g = sv("g");
+    eligible("tee").filter((c) => c.m <= geo.L + 20).forEach((c, i) => {
+      const p = geo.offsetPoint(c.m, 0);
+      const r = hyp(geo.tee, p);
+      g.append(sv("circle", { cx: geo.tee[0], cy: geo.tee[1], r, fill: "none", stroke: "#a5f3fc", "stroke-width": 1.2, "stroke-dasharray": "3 5", "vector-effect": "non-scaling-stroke", opacity: 0.85 }));
+      // labels alternate left and right of the line of play so they don't stack up
+      const base = Math.atan2(p[1] - geo.tee[1], p[0] - geo.tee[0]) + (i % 2 ? -0.35 : 0.35);
+      const lp = [geo.tee[0] + Math.cos(base) * r, geo.tee[1] + Math.sin(base) * r];
+      const t = sv("text", { x: lp[0], y: lp[1] - 3 * u, "text-anchor": "middle", fill: "#a5f3fc", "font-size": fs * 0.9, "font-weight": 600, "paint-order": "stroke", stroke: "#231f20", "stroke-width": 3 * u });
+      t.textContent = `${c.id} ${fmtN(c.m)}`;
+      g.append(t);
+    });
+    overlay.append(g);
+  }
+
+  // calibration route and points
+  if (state.mode === "calibrate" && !state.gameday) {
+    const g = sv("g");
+    g.append(sv("polyline", { points: geo.pts.map((p) => p.join(",")).join(" "), fill: "none", stroke: "#22d3ee", "stroke-width": 2, "vector-effect": "non-scaling-stroke" }));
+    holeRoute(n).forEach((p, i) => {
+      const color = p.kind === "tee" ? "#fde047" : p.kind === "green" ? "#4ade80" : p.kind === "bend" ? "#e879f9" : "#22d3ee";
+      g.append(sv("circle", { cx: p.px[0], cy: p.px[1], r: 7 * u, fill: color, stroke: "#111", "stroke-width": 1.5, "vector-effect": "non-scaling-stroke" }));
+      const flip = p.px[0] > W * 0.6;  // labels on the right half go to the left of the point, so they stay on the map
+      const t = sv("text", { x: p.px[0] + (flip ? -10 : 10) * u, y: p.px[1] + 4 * u, "text-anchor": flip ? "end" : "start", fill: "#fff", "font-size": fs * 0.9, "font-weight": 600, "paint-order": "stroke", stroke: "#231f20", "stroke-width": 3 * u });
+      t.textContent = p.kind === "tee" || p.m == null ? p.label : `${p.label} (${fmtN(p.m)})`;
+      g.append(t);
+    });
+    overlay.append(g);
+  }
+
+  // the plan: shot lines, landing zones, labels
+  if (state.mode !== "calibrate" || state.gameday) {
+    const g = sv("g");
+    const colors = { ok: "#4ade80", warn: "#fbbf24", bad: "#f87171" };
+    plan.shots.forEach((s, i) => {
+      const c = colors[worstHit(s.hits)];
+      // dark casing under a white line, so the shot shows on the white fairway and the dark rough
+      const seg = { x1: s.from[0], y1: s.from[1], x2: s.to[0], y2: s.to[1], "vector-effect": "non-scaling-stroke", "stroke-linecap": "round" };
+      g.append(sv("line", { ...seg, stroke: "#14532d", "stroke-width": 5.5 }));
+      g.append(sv("line", { ...seg, stroke: "#fff", "stroke-width": 2.5, "stroke-dasharray": s.approach ? "7 5" : "none" }));
+      const z = s.zone;
+      g.append(sv("ellipse", { cx: z.center[0], cy: z.center[1], rx: z.along, ry: z.across, transform: `rotate(${z.angle} ${z.center[0]} ${z.center[1]})`, fill: c, "fill-opacity": 0.22, stroke: c, "stroke-width": 1.5, "vector-effect": "non-scaling-stroke" }));
+      const mid = [(s.from[0] + s.to[0]) / 2, (s.from[1] + s.to[1]) / 2];
+      g.append(sv("circle", { cx: mid[0], cy: mid[1], r: 10 * u, fill: "#1f6f4a", stroke: "#fff", "stroke-width": 1.5, "vector-effect": "non-scaling-stroke" }));
+      const num = sv("text", { x: mid[0], y: mid[1] + 4.5 * u, "text-anchor": "middle", fill: "#fff", "font-size": fs, "font-weight": 700 });
+      num.textContent = i + 1;
+      g.append(num);
+      const lab = sv("text", { x: mid[0] + 14 * u, y: mid[1] + 4.5 * u, fill: "#fff", "font-size": fs, "font-weight": 600, "paint-order": "stroke", stroke: "#231f20", "stroke-width": 3.5 * u });
+      lab.textContent = `${s.club.id === "SWp" ? "SW" : s.club.id} ${fmtN(s.d)}`;
+      g.append(lab);
+    });
+    if (plan.custom) for (const p of state.holes[n].myRoute) g.append(sv("circle", { cx: p[0], cy: p[1], r: 6 * u, fill: "#fff", stroke: "#1f6f4a", "stroke-width": 2, "vector-effect": "non-scaling-stroke" }));
+    overlay.append(g);
+  }
+
+  // measured point
+  if (state.tap && !state.gameday && state.mode === "plan") {
+    const p = state.tap;
+    const g = sv("g");
+    g.append(sv("line", { x1: geo.tee[0], y1: geo.tee[1], x2: p[0], y2: p[1], stroke: "#fde047", "stroke-width": 1.5, "stroke-dasharray": "4 4", "vector-effect": "non-scaling-stroke" }));
+    g.append(sv("line", { x1: p[0], y1: p[1], x2: geo.green[0], y2: geo.green[1], stroke: "#fde047", "stroke-width": 1.5, "stroke-dasharray": "4 4", "vector-effect": "non-scaling-stroke" }));
+    g.append(sv("circle", { cx: p[0], cy: p[1], r: 7 * u, fill: "#fde047", stroke: "#111", "stroke-width": 1.5, "vector-effect": "non-scaling-stroke" }));
+    const t = sv("text", { x: p[0] + 11 * u, y: p[1] - 8 * u, fill: "#fde047", "font-size": fs, "font-weight": 700, "paint-order": "stroke", stroke: "#231f20", "stroke-width": 3.5 * u });
+    t.textContent = `${fmtN(geo.dist(geo.tee, p))} · ${fmtN(geo.dist(p, geo.green))} to go`;
+    g.append(t);
+    overlay.append(g);
+  }
+}
+
+// ---------- side panels ----------
+function renderHolePanel() {
+  const n = state.hole, h = courseHole(n);
+  const plan = planFor(n);
+  const target = plan.target;
+  $("gdStrip").replaceChildren(el("b", {}, `Hole ${n}`), ` · Par ${h.par} · ${fmt(h.yellow_m)} · `, el("b", {}, `Target ${target}`));
+  const p = $("holePanel");
+  p.replaceChildren();
+  p.append(el("h2", {}, `Hole ${n}`));
+  p.append(el("div", { class: "facts" },
+    el("span", { class: "chip" }, `Par ${h.par}`),
+    el("span", { class: "chip" }, `SI ${h.stroke_index}`),
+    el("span", { class: "chip" }, fmt(h.yellow_m) + " yellow"),
+    el("span", { class: "chip strong" }, `Target ${target} · ${scoreName(target - h.par)}`),
+  ));
+  if (h.needs_review) p.append(el("div", { class: "banner" }, "Needs review: ", h.review_notes.join(" ")));
+  if (!calibrationConfirmed(n)) p.append(el("div", { class: "banner edit-only" }, "Tee and green were placed automatically. Check them once in Calibrate, then confirm."));
+
+  p.append(el("h3", { style: "margin-top:12px" }, plan.custom ? "My route" : "Caddie plan"));
+  const ol = el("ol", { class: "shots" });
+  plan.shots.forEach((s, i) => {
+    const lat = i === 0 || !s.approach ? plan.strat.aim_m : plan.strat.green_aim_m;
+    const aimText = !plan.custom && lat ? ` · aim ${fmt(Math.abs(lat))} ${lat < 0 ? "left" : "right"}` : "";
+    const hit = worstHit(s.hits);
+    ol.append(el("li", {},
+      el("div", { class: "shot-head" },
+        el("span", { class: "shot-n" }, String(i + 1)),
+        el("span", { class: "shot-club" }, s.club.name),
+        el("span", { class: "muted" }, `${fmt(s.d)}${aimText}`),
+      ),
+      el("div", { class: "shot-why" }, s.why),
+      hit !== "ok" ? el("div", { class: `hit ${hit}` }, hitText(s.hits)) : null,
+    ));
+  });
+  p.append(ol);
+  const toGreen = plan.shots.length;
+  const margin = target - (toGreen + 2);
+  p.append(el("div", { class: "summary-line" },
+    `${toGreen} shot${toGreen > 1 ? "s" : ""} to the green + 2 putts = ${toGreen + 2}. `,
+    el("b", {}, margin > 0 ? `${margin} stroke${margin > 1 ? "s" : ""} of margin.` : margin === 0 ? "Right on target." : `${-margin} over target: rethink it.`)));
+
+  p.append(el("h3", { style: "margin-top:16px" }, "Key points"));
+  p.append(el("div", { class: "kv", style: "margin-bottom:8px" },
+    el("span", { class: "muted" }, "Watch out"), el("b", {}, plan.strat.key_hazard || "-"),
+    el("span", { class: "muted" }, "Safe miss"), el("b", {}, plan.strat.safe_miss || "-"),
+  ));
+  p.append(el("ul", { class: "notes" }, (plan.strat.notes || []).slice(0, state.gameday ? 3 : 9).map((t) => el("li", {}, t))));
+}
+
+function renderModePanel() {
+  const n = state.hole;
+  const p = $("modePanel");
+  p.replaceChildren();
+  const geo = geoNow;
+  if (state.mode === "plan") {
+    p.append(el("h3", {}, "Measure"));
+    if (!state.tap) { p.append(el("p", { class: "muted", style: "margin:0" }, "Tap anywhere on the map to see the distance from the tee and to the green.")); return; }
+    const t = state.tap, depth = courseHole(n).green_depth_m;
+    const toGreen = geo.dist(t, geo.green);
+    const along = geo.mOf(t);
+    p.append(el("div", { class: "kv" },
+      el("span", { class: "muted" }, "From tee"), el("b", {}, `${fmt(geo.dist(geo.tee, t))} straight · ${fmt(along)} along the fairway`),
+      el("span", { class: "muted" }, "To green centre"), el("b", {}, `${fmt(toGreen)} straight · ${fmt(Math.max(0, geo.L - along))} along the fairway`),
+      el("span", { class: "muted" }, "Front / back"), el("b", {}, `${fmt(toGreen - depth / 2)} / ${fmt(toGreen + depth / 2)}`),
+    ));
+    const best = eligible("fairway").filter((c) => !c.last_resort).sort((a, b) => Math.abs(a.m - toGreen) - Math.abs(b.m - toGreen))[0];
+    if (best) p.append(el("p", { class: "muted", style: "margin:8px 0 0" }, `From here to the green: ${toGreen < best.m - 12 ? "partial wedge" : best.name}.`));
+  } else if (state.mode === "route") {
+    const pts = state.holes[n]?.myRoute || [];
+    p.append(el("h3", {}, "My route"));
+    p.append(el("p", { class: "muted", style: "margin-top:0" }, pts.length ? "Each tap adds the next landing spot. The last point plays to the green." : "Tap where you want each shot to land (up to 4 points). The plan and landing zones follow your route."));
+    p.append(el("div", { class: "row" },
+      el("button", { class: "btn", onclick: () => { pts.pop(); holeOverrides(n).myRoute = pts; save(); render(); } }, "Undo last point"),
+      el("button", { class: "btn", onclick: () => { delete holeOverrides(n).myRoute; save(); render(); } }, "Back to caddie plan"),
+    ));
+  } else if (state.mode === "hazards") {
+    p.append(el("h3", {}, "Hazards"));
+    p.append(el("p", { class: "muted", style: "margin-top:0" }, "Dashed = suggested from the map, solid = confirmed. Tap a hazard to confirm or delete it. Tap an empty spot to add one of this type:"));
+    const seg = el("div", { class: "seg", style: "margin-bottom:10px" });
+    for (const [k, st] of Object.entries(HAZARD_STYLE)) seg.append(el("button", { "aria-pressed": String(state.hazardType === k), onclick: () => { state.hazardType = k; render(); } }, st.label));
+    p.append(seg);
+    const hz = holeHazards(n);
+    const sel = state.selectedHazard;
+    if (sel != null && hz[sel]) {
+      const z = hz[sel];
+      p.append(el("div", { class: "row", style: "align-items:center" },
+        el("b", {}, `${HAZARD_STYLE[z.type].label} (${z.status})`),
+        z.status === "suggested" ? el("button", { class: "btn primary", onclick: () => { z.status = "confirmed"; holeOverrides(n).hazards = hz; state.selectedHazard = null; save(); render(); } }, "Confirm") : null,
+        el("button", { class: "btn", onclick: () => { hz.splice(sel, 1); holeOverrides(n).hazards = hz; state.selectedHazard = null; save(); render(); } }, "Delete"),
+      ));
+    }
+    p.append(el("div", { class: "row", style: "margin-top:10px" },
+      el("button", { class: "btn", onclick: () => { hz.forEach((z) => (z.status = "confirmed")); holeOverrides(n).hazards = hz; save(); render(); } }, "Confirm all on this hole"),
+      el("button", { class: "btn", onclick: () => { delete holeOverrides(n).hazards; state.selectedHazard = null; save(); render(); } }, "Reset to suggested"),
+    ));
+  } else if (state.mode === "calibrate") {
+    p.append(el("h3", {}, "Calibrate"));
+    p.append(el("p", { class: "muted", style: "margin-top:0" }, "The maps are drawings, not to scale, so distances come from the scorecard plus the guide's distance arcs. Pick a point, then tap the map where it belongs. Add a bend on doglegs so distances follow the fairway."));
+    const route = clone(holeRoute(n));
+    const wrap = el("div", { class: "row" });
+    route.forEach((pt, i) => wrap.append(el("button", { class: "btn" + (state.armed === i ? " armed" : ""), onclick: () => { state.armed = state.armed === i ? null : i; render(); } }, pt.m != null ? `${pt.label}` : `Bend ${i}`)));
+    wrap.append(el("button", { class: "btn" + (state.armed === "bend" ? " armed" : ""), onclick: () => { state.armed = state.armed === "bend" ? null : "bend"; render(); } }, "+ Add bend"));
+    p.append(wrap);
+    if (state.armed != null) p.append(el("p", { class: "muted" }, state.armed === "bend" ? "Tap the map where the fairway bends." : "Now tap the map to place it."));
+    p.append(el("div", { class: "row", style: "margin-top:10px; align-items:center" },
+      el("button", { class: "btn primary", onclick: () => { holeOverrides(n).confirmed = true; save(); render(); } }, calibrationConfirmed(n) ? "Confirmed" : "Confirm calibration"),
+      el("button", { class: "btn", onclick: () => { delete holeOverrides(n).route; delete holeOverrides(n).confirmed; state.armed = null; save(); render(); } }, "Reset to suggested"),
+      el("span", { class: "muted" }, `Tee to green: ${fmt(geo.mOf(geo.green))} along the fairway (card ${fmt(geo.L)}), ${fmt(geo.dist(geo.tee, geo.green))} in a straight line.`),
+    ));
+  }
+}
+
+// ---------- round view ----------
+function roundRows() {
+  const targets = holeTargets(state.target);
+  const rows = DATA.course.holes.map((h) => {
+    const plan = planFor(h.hole);
+    const risk = plan.shots.reduce((s, x) => s + penalty(x.hits), 0);
+    const hasBig = holeHazards(h.hole).some((z) => z.type === "water" || z.type === "ob");
+    return { h, plan, target: targets[h.hole], care: risk * 3 + (hasBig ? 0.5 : 0) + (19 - h.stroke_index) / 18 };
+  });
+  const careful = new Set([...rows].sort((a, b) => b.care - a.care).slice(0, 4).map((r) => r.h.hole));
+  return { rows, careful };
+}
+function roundTable(rows, careful, compact) {
+  const t = el("table");
+  t.append(el("thead", {}, el("tr", {},
+    el("th", {}, "Hole"), el("th", { class: "num" }, "Par"), el("th", { class: "num" }, "SI"), el("th", { class: "num" }, state.unit),
+    el("th", { class: "num" }, "Target"), el("th", {}, "Clubs, tee first"), el("th", {}, "Watch out"))));
+  const tb = el("tbody");
+  for (const r of rows) {
+    const s = r.plan.shots;
+    tb.append(el("tr", { class: careful.has(r.h.hole) ? "careful" : "", style: compact ? "" : "cursor:pointer", onclick: compact ? null : () => { state.hole = r.h.hole; setView("hole"); } },
+      el("td", {}, String(r.h.hole)), el("td", { class: "num" }, String(r.h.par)), el("td", { class: "num" }, String(r.h.stroke_index)),
+      el("td", { class: "num" }, String(fmtN(r.h.yellow_m))), el("td", { class: "num" }, String(r.target)),
+      el("td", { style: "white-space:nowrap" }, s.map((x) => (x.club.id === "SWp" ? "SW½" : x.club.id)).join(" › ")),
+      el("td", {}, r.plan.strat.key_hazard || "")));
+  }
+  t.append(tb);
+  const sum = (f) => rows.reduce((a, r) => a + f(r), 0);
+  t.append(el("tfoot", {}, el("tr", {},
+    el("td", {}, "Total"), el("td", { class: "num" }, String(sum((r) => r.h.par))), el("td", {}, ""),
+    el("td", { class: "num" }, String(fmtN(sum((r) => r.h.yellow_m)))), el("td", { class: "num" }, String(sum((r) => r.target))),
+    el("td", { colspan: 2 }, ""))));
+  return t;
+}
+function renderRound() {
+  const { rows, careful } = roundRows();
+  const list = [...careful].sort((a, b) => a - b).join(", ");
+  $("roundIntro").textContent = `Target ${state.target}: ${state.target - 72} strokes over par, placed on the hardest holes first. Be most careful on holes ${list} (marked). Tap a row to open the hole.`;
+  $("roundTable").replaceWith(Object.assign(roundTable(rows, careful, false), { id: "roundTable" }));
+  const sheet = $("printSheet");
+  sheet.replaceChildren(
+    el("h1", {}, `Olivar, yellow tees · target ${state.target}`),
+    el("p", {}, `Be most careful on holes ${list}. Distances in ${state.unit === "m" ? "meters" : "yards"}. Clubs: D driver, 6T 6 iron off a tee, 6I 6 iron off the ground, SW½ partial wedge.`),
+    roundTable(rows, careful, true),
+  );
+}
+
+// ---------- bag view ----------
+function renderBag() {
+  const t = el("table", { class: "bag-table", id: "bagTable" });
+  t.append(el("thead", {}, el("tr", {}, el("th", {}, "Club"), el("th", {}, "Yards"), el("th", {}, "Meters"), el("th", {}, "Width ± m"), el("th", {}, "Depth ± m"), el("th", {}, "Notes"))));
+  const tb = el("tbody");
+  state.bag.clubs.forEach((c) => {
+    const input = (key, step) => el("input", { type: "number", step, value: c[key], inputmode: "decimal", onchange: (e) => { const v = parseFloat(e.target.value); if (!isNaN(v) && v > 0) { c[key] = v; save(); renderBag(); } } });
+    tb.append(el("tr", {},
+      el("td", {}, c.name), el("td", {}, input("yd", 1)), el("td", { class: "num" }, String(Math.round(c.yd * YD))),
+      el("td", {}, input("width_m", 1)), el("td", {}, input("depth_m", 1)),
+      el("td", { class: "muted" }, c.last_resort ? "Only if nothing else works" : c.from === "tee" ? "Tee only" : c.from === "fairway" ? "Off the ground" : "")));
+  });
+  t.append(tb);
+  $("bagTable").replaceWith(t);
+}
+
+// ---------- export / import ----------
+function download(name, obj) {
+  const a = el("a", { href: URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" })), download: name });
+  document.body.append(a); a.click(); a.remove();
+}
+function exportCourse() {
+  const c = clone(DATA.course);
+  for (const h of c.holes) {
+    const route = holeRoute(h.hole);
+    h.calibration = { ...h.calibration, route: clone(route), tee_px: route[0].px, green_px: route[route.length - 1].px, confirmed: !!calibrationConfirmed(h.hole) };
+    h.hazards = holeHazards(h.hole);
+    if (state.holes[h.hole]?.myRoute?.length) h.my_route_px = state.holes[h.hole].myRoute; else delete h.my_route_px;
+  }
+  download("course.json", c);
+}
+function importFile(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const j = JSON.parse(r.result);
+      if (j.clubs) { state.bag = j; $("ioMsg").textContent = "Bag imported."; }
+      else if (j.holes && j.holes[0]?.calibration) {
+        for (const h of j.holes) {
+          const o = holeOverrides(h.hole);
+          if (h.calibration.route) o.route = h.calibration.route;
+          o.confirmed = !!h.calibration.confirmed;
+          o.hazards = h.hazards;
+          if (h.my_route_px) o.myRoute = h.my_route_px; else delete o.myRoute;
+        }
+        $("ioMsg").textContent = "Course imported: calibration, hazards and routes restored.";
+      } else throw new Error("not a course.json or bag.json");
+      save(); render();
+    } catch (e) { $("ioMsg").textContent = `Couldn't import that file (${e.message}).`; }
+  };
+  r.readAsText(file);
+}
+
+// ---------- map interaction: tap, swipe ----------
+function svgPoint(evt) {
+  const svg = $("map");
+  const pt = svg.createSVGPoint();
+  pt.x = evt.clientX; pt.y = evt.clientY;
+  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+  return [Math.round(p.x), Math.round(p.y)];
+}
+function onMapTap(p) {
+  const n = state.hole;
+  if (state.gameday) return;
+  if (state.mode === "plan") { state.tap = p; }
+  else if (state.mode === "route") {
+    const o = holeOverrides(n);
+    o.myRoute = o.myRoute || [];
+    if (o.myRoute.length < 4) o.myRoute.push(p);
+    save();
+  } else if (state.mode === "hazards") {
+    const hz = holeHazards(n);
+    const i = hz.findIndex((z) => z.shape === "line" ? z.points.some((q) => hyp(q, p) < 30) : hazardHit(z, p, geoNow));
+    if (i >= 0) state.selectedHazard = i;
+    else {
+      hz.push({ type: state.hazardType, shape: "circle", points: [p], r: HAZARD_STYLE[state.hazardType].r, status: "confirmed" });
+      holeOverrides(n).hazards = hz; state.selectedHazard = null; save();
+    }
+  } else if (state.mode === "calibrate" && state.armed != null) {
+    const route = clone(holeRoute(n));
+    if (state.armed === "bend") {
+      // insert the bend into the segment it sits closest to
+      let bestI = 1, bestD = Infinity;
+      for (let i = 0; i < route.length - 1; i++) {
+        const a = route[i].px, b = route[i + 1].px, len = hyp(a, b) || 1;
+        let t = ((p[0] - a[0]) * (b[0] - a[0]) + (p[1] - a[1]) * (b[1] - a[1])) / (len * len);
+        t = Math.max(0, Math.min(1, t));
+        const d = hyp(p, [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+        if (d < bestD) { bestD = d; bestI = i + 1; }
+      }
+      route.splice(bestI, 0, { kind: "bend", px: p, m: null, label: "Bend" });
+    } else route[state.armed].px = p;
+    holeOverrides(n).route = route;
+    holeOverrides(n).confirmed = false;
+    state.armed = null;
+    save();
+  }
+  render();
+}
+(function wireMap() {
+  const card = $("mapCard");
+  let down = null;
+  card.addEventListener("pointerdown", (e) => { down = { x: e.clientX, y: e.clientY, t: Date.now() }; });
+  card.addEventListener("pointerup", (e) => {
+    if (!down) return;
+    const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    const d0 = down; down = null;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > 2 * Math.abs(dy) && Date.now() - d0.t < 800) { go(dx < 0 ? 1 : -1); return; }
+    if (Math.hypot(dx, dy) < 10 && e.target.closest("svg")) onMapTap(svgPoint(e));
+  });
+})();
+
+// ---------- top-level ----------
+function go(step) {
+  state.hole = ((state.hole - 1 + step + 18) % 18) + 1;
+  state.tap = null; state.armed = null; state.selectedHazard = null;
+  save(); render();
+}
+function setView(v) { state.view = v; render(); window.scrollTo(0, 0); }
+function render() {
+  document.body.classList.toggle("gameday", state.gameday);
+  $("gamedayBtn").setAttribute("aria-pressed", String(state.gameday));
+  $("gamedayBtn").classList.toggle("primary", state.gameday);
+  $("holeSelect").value = state.hole;
+  $("targetRange").value = state.target;
+  const over = state.target - 72;
+  $("targetOut").textContent = `${state.target} (+${over})`;
+  for (const b of $("unitSeg").children) b.setAttribute("aria-pressed", String(b.dataset.unit === state.unit));
+  for (const b of $("viewTabs").children) b.setAttribute("aria-pressed", String(b.dataset.view === state.view));
+  for (const b of $("modeSeg").children) b.setAttribute("aria-pressed", String(b.dataset.mode === state.mode));
+  $("ringsToggle").checked = state.rings;
+  for (const v of ["hole", "round", "bag"]) $(`view-${v}`).hidden = state.view !== v;
+  if (state.view === "hole") { renderMap(); renderHolePanel(); renderModePanel(); }
+  renderRound();  // also keeps the print sheet current
+  if (state.view === "bag") renderBag();
+}
+
+// wire controls
+for (const h of DATA.course.holes) $("holeSelect").append(el("option", { value: h.hole }, `Hole ${h.hole}`));
+$("holeSelect").addEventListener("change", (e) => { state.hole = +e.target.value; state.tap = null; state.armed = null; save(); render(); });
+$("prev").addEventListener("click", () => go(-1));
+$("next").addEventListener("click", () => go(1));
+$("targetRange").addEventListener("input", (e) => { state.target = +e.target.value; save(); render(); });
+$("unitSeg").addEventListener("click", (e) => { if (e.target.dataset.unit) { state.unit = e.target.dataset.unit; save(); render(); } });
+$("viewTabs").addEventListener("click", (e) => { if (e.target.dataset.view) setView(e.target.dataset.view); });
+$("modeSeg").addEventListener("click", (e) => { if (e.target.dataset.mode) { state.mode = e.target.dataset.mode; state.armed = null; state.selectedHazard = null; render(); } });
+$("ringsToggle").addEventListener("change", (e) => { state.rings = e.target.checked; save(); render(); });
+$("gamedayBtn").addEventListener("click", () => { state.gameday = !state.gameday; if (state.gameday) state.view = "hole"; render(); });
+$("printBtn").addEventListener("click", () => { renderRound(); window.print(); });
+$("resetBag").addEventListener("click", () => { state.bag = clone(DATA.bag); save(); render(); });
+$("exportCourse").addEventListener("click", exportCourse);
+$("exportBag").addEventListener("click", () => download("bag.json", state.bag));
+$("importFile").addEventListener("change", (e) => { if (e.target.files[0]) importFile(e.target.files[0]); e.target.value = ""; });
+$("resetAll").addEventListener("click", () => { if (confirm("Reset calibration, hazards, routes and bag on this device?")) { state.holes = {}; state.bag = clone(DATA.bag); save(); render(); } });
+document.addEventListener("keydown", (e) => { if (e.target.tagName === "INPUT") return; if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); });
+window.addEventListener("resize", () => { if (state.view === "hole") renderMap(); });
+render();
+requestAnimationFrame(() => renderMap());  // second pass once the SVG has a size, for label scaling
+</script>
+</body>
+</html>
