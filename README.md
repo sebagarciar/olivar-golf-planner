@@ -28,7 +28,8 @@ goes, see where a shot can end up, and get a plan per hole that fits the score I
 
 ## Using it
 
-Open `index.html` in a browser. Everything I change (calibration, hazards, routes, bag) is saved
+Live at https://sebagarciar.github.io/olivar-golf-planner/ (on the phone, add it to the home
+screen). Or open `index.html` in a browser. Everything I change (calibration, hazards, routes, bag) is saved
 in that browser, and can be exported to JSON from the Bag tab.
 
 The data lives in three files: `course.json` (holes, calibration, hazards), `bag.json` (my
