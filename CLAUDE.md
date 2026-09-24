@@ -19,8 +19,10 @@ The full spec is `PRD_olivar_golf_planner.md`. Repo: `sebagarciar/olivar-golf-pl
 
 ## Facts to respect
 
-- Yellow tees, meters. The scorecard is the source of truth for distances (Seba confirmed
-  2026-09-24). The guide's printed distances are older and differ on 11 holes; kept only as
+- Yellow tees. Course data is in meters because the scorecard is (source of truth, Seba
+  confirmed 2026-09-24), but Seba thinks in yards: the app shows yards by default, the bag is in
+  yards, and nothing on screen may hard-code meters (use `fmt()`). Notes in `strategy.json` carry
+  no distances for the same reason. The guide's printed distances are older and differ on 11 holes; kept only as
   `guide_distance_m`.
 - The maps are drawings, not to scale. Distances are interpolated along the route between
   anchors: tee (0), the guide's distance arcs (e.g. "220" from the tee, "85" to the green) and

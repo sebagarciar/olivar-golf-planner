@@ -127,7 +127,7 @@ body.gameday .gameday-only { display: block; }
   </div>
   <div class="spacer"></div>
   <div class="seg" id="unitSeg" role="group" aria-label="Units">
-    <button data-unit="m">m</button><button data-unit="yd">yd</button>
+    <button data-unit="yd">yd</button><button data-unit="m">m</button>
   </div>
   <div class="tabs" id="viewTabs" role="group" aria-label="View">
     <button data-view="hole">Hole</button><button data-view="round">Round</button><button data-view="bag" class="edit-only">Bag</button>
@@ -218,7 +218,7 @@ const saved = loadStore();
 const state = {
   hole: saved.hole || 1,
   target: saved.target || 95,
-  unit: saved.unit || "m",
+  unit: saved.unit || "yd",  // Seba plays in yards; the course data stays in meters
   view: "hole",
   mode: "plan",
   rings: !!saved.rings,
@@ -592,7 +592,8 @@ function renderMap() {
   const plan = planFor(n);
   const geo = plan.geo; geoNow = geo;
   const rect = svg.getBoundingClientRect();
-  const u = rect.width ? Math.max(W / rect.width, H / rect.height) : 2;  // image px per screen px
+  // image px per screen px; before the first layout the box can be 0 tall, so fall back to the width
+  const u = rect.width > 0 && rect.height > 0 ? Math.max(W / rect.width, H / rect.height) : rect.width > 0 ? W / rect.width : 2;
   const fs = 13 * u, sw = 2;
 
 
